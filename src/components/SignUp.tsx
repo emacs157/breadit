@@ -1,29 +1,54 @@
-import { Icons } from '@/components/Icons'
-import UserAuthForm from '@/components/UserAuthForm'
-import Link from 'next/link'
+"use client";
+import axios from "axios";
+import { FC, useState } from "react";
 
-const SignUp = () => {
-  return (
-    <div className='container mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]'>
-      <div className='flex flex-col space-y-2 text-center'>
-        <Icons.logo className='mx-auto h-6 w-6' />
-        <h1 className='text-2xl font-semibold tracking-tight'>Sign Up</h1>
-        <p className='text-sm max-w-xs mx-auto'>
-          By continuing, you are setting up a Breadit account and agree to our
-          User Agreement and Privacy Policy.
-        </p>
-      </div>
-      <UserAuthForm />
-      <p className='px-8 text-center text-sm text-muted-foreground'>
-        Already a Breadditor?{' '}
-        <Link
-          href='/sign-in'
-          className='hover:text-brand text-sm underline underline-offset-4'>
-          Sign in
-        </Link>
-      </p>
-    </div>
-  )
+interface SignUpProps {
+  // Add any additional props you might need
 }
 
-export default SignUp
+const SignUp: FC<SignUpProps> = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleCredentialSignUp = async (event) => {
+    event.preventDefault(); // Prevent default form submission
+
+    try {
+      const payload = { username, password };
+      const response = await axios.post(`/api/signUp/`, payload);
+
+      // Handle successful sign-up (e.g., redirect to a different page)
+      // ...
+    } catch (error) {
+      console.log(error.message); // Display error message to the user
+    }
+  };
+
+  return (
+    <div>
+      {/* Credential Sign Up Form */}
+      <form onSubmit={handleCredentialSignUp} className="flex flex-col gap-4">
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          className="input-class" // Replace with your input CSS class
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          className="input-class" // Replace with your input CSS class
+        />
+        <button type="submit" className="button-class">
+          Sign Up
+        </button>{" "}
+        {/* Replace with your button CSS class */}
+      </form>
+    </div>
+  );
+};
+
+export default SignUp;
