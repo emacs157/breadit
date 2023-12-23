@@ -36,8 +36,9 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
   } catch (error) {
     console.error(`Error fetching post from Redis: ${error}`);
   }
-
   let post: (Post & { votes: Vote[]; author: User }) | null = null;
+  console.log(post);
+  console.log("1");
 
   if (!cachedPost) {
     post = await db.post.findFirst({
@@ -50,8 +51,11 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
       },
     });
   }
+  console.log("2");
 
-  if (!post && !cachedPost) return notFound();
+  const postId = post?.id ?? cachedPost?.id;
+  console.log(postId);
+  if (!postId) return notFound();
 
   return (
     <div>
@@ -59,7 +63,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
         <Suspense fallback={<PostVoteShell />}>
           {/* @ts-expect-error server component */}
           <PostVoteServer
-            postId={post?.id ?? cachedPost.id}
+            postId={postId}
             getData={async () => {
               return await db.post.findUnique({
                 where: {
@@ -75,14 +79,17 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
 
         <div className="sm:w-0 w-full flex-1 bg-white p-4 rounded-sm">
           <p className="max-h-40 mt-1 truncate text-xs text-gray-500">
-            Posted by u/{post?.author.username ?? cachedPost.authorUsername}{" "}
-            {formatTimeToNow(new Date(post?.createdAt ?? cachedPost.createdAt))}
+            Posted by u/{post?.author.username ?? cachedPost?.authorUsername}{" "}
+            {(post?.createdAt ?? cachedPost?.createdAt) &&
+              formatTimeToNow(
+                new Date((post?.createdAt ?? cachedPost?.createdAt)!)
+              )}
           </p>
           <h1 className="text-xl font-semibold py-2 leading-6 text-gray-900">
-            {post?.title ?? cachedPost.title}
+            {post?.title ?? cachedPost?.title}
           </h1>
 
-          <EditorOutput content={post?.content ?? cachedPost.content} />
+          <EditorOutput content={post?.content ?? cachedPost?.content} />
           <div>comment here</div>
 
           <Suspense
@@ -91,7 +98,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
             }
           >
             {/* @ts-expect-error Server Component */}
-            <CommentsSection postId={post?.id ?? cachedPost.id} />
+            <CommentsSection postId={post?.id ?? cachedPost?.id} />
           </Suspense>
         </div>
       </div>

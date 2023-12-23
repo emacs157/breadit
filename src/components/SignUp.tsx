@@ -1,9 +1,9 @@
 "use client";
 import axios from "axios";
-import router from "next/dist/client/router";
-import { FC, useState } from "react";
-import { Input } from "./ui/Input";
+import { FC, FormEvent, useState } from "react";
 import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
+import router from "next/router";
 
 interface SignUpProps {
   // Add any additional props you might need
@@ -13,18 +13,28 @@ const SignUp: FC<SignUpProps> = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleCredentialSignUp = async (event) => {
+  const handleCredentialSignUp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent default form submission
 
     try {
       const payload = { username, password };
       const response = await axios.post(`/api/signUp/`, payload);
-      router.push("/");
 
-      // Handle successful sign-up (e.g., redirect to a different page)
-      // ...
+      if (response.status === 200 || response.status === 201) {
+        // Redirect to home page on successful sign-up
+        router.push("/");
+      } else {
+        // Handle other status codes or responses as needed
+        console.log("Sign-up was not successful.");
+      }
     } catch (error) {
-      console.log(error.message); // Display error message to the user
+      if (axios.isAxiosError(error) && error.response) {
+        // Handle API errors (e.g., display error message to the user)
+        console.log(`Error: ${error.response.data.message}`);
+      } else {
+        // Handle non-API errors (e.g., network issues)
+        console.log(error);
+      }
     }
   };
 

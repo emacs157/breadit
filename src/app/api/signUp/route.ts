@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 const bcrypt = require("bcryptjs");
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const body = await req.json();
 
   const { username, password } = body; // Extract password from request

@@ -29,9 +29,9 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: Credentials, req) {
+      async authorize(credentials, req) {
         const user = await db.user.findUnique({
-          where: { username: credentials.username },
+          where: { username: credentials?.username },
         });
 
         if (!user) {
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         // You should implement your own password checking logic here
         // For example, if you store hashed passwords in the database, you should verify the hash here
         const isMatch = await bcrypt.compare(
-          credentials.password,
+          credentials?.password,
           user.password
         );
 
