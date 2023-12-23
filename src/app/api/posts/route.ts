@@ -1,13 +1,13 @@
-import { getAuthSession } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { z } from 'zod'
+import { getAuthSession } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { z } from "zod";
 
 export async function GET(req: Request) {
-  const url = new URL(req.url)
+  const url = new URL(req.url);
 
-  const session = await getAuthSession()
+  const session = await getAuthSession();
 
-  let followedCommunitiesIds: string[] = []
+  let followedCommunitiesIds: string[] = [];
 
   if (session) {
     const followedCommunities = await db.subscription.findMany({
@@ -17,9 +17,9 @@ export async function GET(req: Request) {
       include: {
         subreddit: true,
       },
-    })
+    });
 
-    followedCommunitiesIds = followedCommunities.map((sub) => sub.subreddit.id)
+    followedCommunitiesIds = followedCommunities.map((sub) => sub.subreddit.id);
   }
 
   try {
@@ -30,19 +30,19 @@ export async function GET(req: Request) {
         subredditName: z.string().nullish().optional(),
       })
       .parse({
-        subredditName: url.searchParams.get('subredditName'),
-        limit: url.searchParams.get('limit'),
-        page: url.searchParams.get('page'),
-      })
+        subredditName: url.searchParams.get("subredditName"),
+        limit: url.searchParams.get("limit"),
+        page: url.searchParams.get("page"),
+      });
 
-    let whereClause = {}
+    let whereClause = {};
 
     if (subredditName) {
       whereClause = {
         subreddit: {
           name: subredditName,
         },
-      }
+      };
     } else if (session) {
       whereClause = {
         subreddit: {
@@ -50,14 +50,14 @@ export async function GET(req: Request) {
             in: followedCommunitiesIds,
           },
         },
-      }
+      };
     }
 
     const posts = await db.post.findMany({
       take: parseInt(limit),
       skip: (parseInt(page) - 1) * parseInt(limit), // skip should start from 0 for page 1
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       include: {
         subreddit: true,
@@ -66,10 +66,10 @@ export async function GET(req: Request) {
         comments: true,
       },
       where: whereClause,
-    })
+    });
 
-    return new Response(JSON.stringify(posts))
+    return new Response(JSON.stringify(posts));
   } catch (error) {
-    return new Response('Could not fetch posts', { status: 500 })
+    return new Response("Could not fetch posts", { status: 500 });
   }
 }

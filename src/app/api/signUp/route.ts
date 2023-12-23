@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+const bcrypt = require("bcryptjs");
 
 export async function POST(req) {
   const body = await req.json();
@@ -17,7 +18,7 @@ export async function POST(req) {
     }
 
     // Hash the password
-    const hashedPassword = password;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create the user
     const user = await db.user.create({

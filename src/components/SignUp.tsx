@@ -1,6 +1,9 @@
 "use client";
 import axios from "axios";
+import router from "next/dist/client/router";
 import { FC, useState } from "react";
+import { Input } from "./ui/Input";
+import { Button } from "./ui/Button";
 
 interface SignUpProps {
   // Add any additional props you might need
@@ -16,6 +19,7 @@ const SignUp: FC<SignUpProps> = () => {
     try {
       const payload = { username, password };
       const response = await axios.post(`/api/signUp/`, payload);
+      router.push("/");
 
       // Handle successful sign-up (e.g., redirect to a different page)
       // ...
@@ -28,23 +32,21 @@ const SignUp: FC<SignUpProps> = () => {
     <div>
       {/* Credential Sign Up Form */}
       <form onSubmit={handleCredentialSignUp} className="flex flex-col gap-4">
-        <input
+        <Input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
-          className="input-class" // Replace with your input CSS class
         />
-        <input
+        <Input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
-          className="input-class" // Replace with your input CSS class
         />
-        <button type="submit" className="button-class">
+        <Button type="submit" className="button-class">
           Sign Up
-        </button>{" "}
+        </Button>
         {/* Replace with your button CSS class */}
       </form>
     </div>

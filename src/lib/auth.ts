@@ -5,6 +5,7 @@ import { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+const bcrypt = require("bcryptjs");
 
 // Define a type for the credentials
 type Credentials = {
@@ -39,7 +40,12 @@ export const authOptions: NextAuthOptions = {
 
         // You should implement your own password checking logic here
         // For example, if you store hashed passwords in the database, you should verify the hash here
-        if (user.password !== credentials.password) {
+        const isMatch = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isMatch) {
           throw new Error("Password is incorrect");
         }
 

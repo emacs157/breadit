@@ -3,6 +3,7 @@
 import UserAuthForm from "@/components/UserAuthForm";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { Input } from "./ui/Input";
 
 export default function SignInPage() {
   const { data: session, loading } = useSession();
@@ -31,9 +32,9 @@ export default function SignInPage() {
         }}
       >
         <label htmlFor="username">Username:</label>
-        <input type="text" id="username" name="username" required />
+        <Input type="text" id="username" name="username" required />
         <br /> <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+        <Input type="password" id="password" name="password" required />
         <br /> <button type="submit">Sign In</button>
       </form>
       <UserAuthForm />
