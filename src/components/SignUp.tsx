@@ -1,15 +1,17 @@
 "use client";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { FC, FormEvent, useState } from "react";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
-import router from "next/router";
 
 interface SignUpProps {
   // Add any additional props you might need
 }
 
 const SignUp: FC<SignUpProps> = () => {
+  const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
